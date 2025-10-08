@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CompanyProfile {
+  id           Int      @id @default(autoincrement())
+  namaUsaha    String
+  alamatUsaha  String
+  nomorTelepon String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model CustomerCategory {
+  id          Int       @id @default(autoincrement())
+  keterangan  String?
+  customers   Customer[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Customer {
+  id                 Int                 @id @default(autoincrement())
+  kode               String              @unique
+  namaCustomer       String
+  kategoriId         Int
+  alamatNoInvoice    String?
+  totalPiutang       Float               @default(0)
+  kategori           CustomerCategory    @relation(fields: [kategoriId], references: [id])
+  invoices           Invoice[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+model Invoice {
+  id                  Int       @id @default(autoincrement())
+  tanggal             DateTime
+  termin              Int
+  jatuhTempo          DateTime
+  noInvoice           String    @unique
+  customerId          Int
+  kategori            String?
+  keteranganTransaksi String?
+  nilaiInvoice        Float
+  statusPembayaran    String?   @default("BELUM_LUNAS")
+  statusInvoice       String?   @default("AKTIF")
+  customer            Customer  @relation(fields: [customerId], references: [id])
+  payments            Payment[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Payment {
+  id          Int      @id @default(autoincrement())
+  tanggal     DateTime
+  invoiceId   Int
+  keterangan  String?
+  penerimaan  Float
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
