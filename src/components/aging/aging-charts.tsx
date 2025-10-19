@@ -22,6 +22,7 @@ interface AgingChartsProps {
 }
 
 const COLORS = {
+  PAID: '#3B82F6',           // blue-500
   CURRENT: '#10B981',        // green-500
   SPECIAL_MENTION: '#F59E0B', // yellow-500
   SUBSTANDARD: '#F97316',    // orange-500

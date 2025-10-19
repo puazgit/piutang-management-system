@@ -177,6 +177,8 @@ export async function GET(request: NextRequest) {
 // Helper functions
 function getColorClassForQuality(quality: string): string {
   switch (quality) {
+    case 'PAID':
+      return 'bg-blue-100 text-blue-800 border-blue-200'
     case 'CURRENT':
       return 'bg-green-100 text-green-800 border-green-200'
     case 'SPECIAL_MENTION':

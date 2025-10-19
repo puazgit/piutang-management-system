@@ -9,6 +9,7 @@ interface InvoiceWithPayments extends Invoice {
 
 // Enum untuk kualitas piutang berdasarkan umur
 export enum InvoiceQuality {
+  PAID = 'PAID',                          // Invoice sudah lunas (N/A)
   CURRENT = 'CURRENT',                    // Belum jatuh tempo
   SPECIAL_MENTION = 'SPECIAL_MENTION',    // 1-30 hari (Dalam Perhatian Khusus)
   SUBSTANDARD = 'SUBSTANDARD',            // 31-60 hari (Kurang Lancar)
@@ -77,6 +78,8 @@ export function determineInvoiceQuality(daysOverdue: number): InvoiceQuality {
 // Fungsi untuk mendapatkan label kualitas dalam bahasa Indonesia
 export function getQualityLabel(quality: InvoiceQuality): string {
   switch (quality) {
+    case InvoiceQuality.PAID:
+      return 'Sudah Lunas (N/A)';
     case InvoiceQuality.CURRENT:
       return 'Belum Jatuh Tempo';
     case InvoiceQuality.SPECIAL_MENTION:
@@ -95,6 +98,8 @@ export function getQualityLabel(quality: InvoiceQuality): string {
 // Fungsi untuk mendapatkan level risiko
 export function getRiskLevel(quality: InvoiceQuality): 'low' | 'medium' | 'high' | 'critical' {
   switch (quality) {
+    case InvoiceQuality.PAID:
+      return 'low';
     case InvoiceQuality.CURRENT:
       return 'low';
     case InvoiceQuality.SPECIAL_MENTION:
@@ -112,6 +117,8 @@ export function getRiskLevel(quality: InvoiceQuality): 'low' | 'medium' | 'high'
 // Fungsi untuk mendapatkan CSS class berdasarkan kualitas
 export function getQualityColorClass(quality: InvoiceQuality): string {
   switch (quality) {
+    case InvoiceQuality.PAID:
+      return 'bg-blue-100 text-blue-800 border-blue-200';
     case InvoiceQuality.CURRENT:
       return 'bg-green-100 text-green-800 border-green-200';
     case InvoiceQuality.SPECIAL_MENTION:
@@ -129,6 +136,17 @@ export function getQualityColorClass(quality: InvoiceQuality): string {
 
 // Fungsi utama untuk menganalisis aging invoice
 export function analyzeInvoiceAging(invoice: Invoice, referenceDate: Date = new Date()): AgingAnalysis {
+  // Jika invoice sudah lunas, return PAID quality
+  if (invoice.statusPembayaran === 'LUNAS') {
+    return {
+      daysOverdue: 0,
+      quality: InvoiceQuality.PAID,
+      qualityLabel: getQualityLabel(InvoiceQuality.PAID),
+      riskLevel: getRiskLevel(InvoiceQuality.PAID),
+      colorClass: getQualityColorClass(InvoiceQuality.PAID)
+    };
+  }
+
   const daysOverdue = calculateDaysOverdue(invoice.jatuhTempo, referenceDate);
   const quality = determineInvoiceQuality(daysOverdue);
   
@@ -225,8 +243,28 @@ export function getAgingBuckets(invoices: InvoiceWithPayments[], referenceDate: 
     const analysis = analyzeInvoiceAging(invoice, referenceDate);
     const amount = remainingBalance;
 
-    const bucketIndex = Object.values(InvoiceQuality).indexOf(analysis.quality);
-    if (bucketIndex >= 0) {
+    // Map quality to bucket index properly
+    let bucketIndex = -1;
+    switch (analysis.quality) {
+      case InvoiceQuality.CURRENT:
+        bucketIndex = 0;
+        break;
+      case InvoiceQuality.SPECIAL_MENTION:
+        bucketIndex = 1;
+        break;
+      case InvoiceQuality.SUBSTANDARD:
+        bucketIndex = 2;
+        break;
+      case InvoiceQuality.DOUBTFUL:
+        bucketIndex = 3;
+        break;
+      case InvoiceQuality.BAD_DEBT:
+        bucketIndex = 4;
+        break;
+      // Skip PAID quality since it's not relevant for outstanding invoices
+    }
+
+    if (bucketIndex >= 0 && bucketIndex < buckets.length) {
       buckets[bucketIndex].count += 1;
       buckets[bucketIndex].amount += amount;
     }
