@@ -272,8 +272,8 @@ export default function InvoiceDetailPage() {
       return <Badge variant="default" className="bg-green-500">Lunas</Badge>
     }
     
-        // Jika belum lunas dan sudah jatuh tempo, tampilkan "Belum Lunas" (merah)
-    if (isOverdue && status === 'BELUM_LUNAS') {
+    // Jika belum lunas dan sudah jatuh tempo, tampilkan "Belum Lunas" (merah)
+    if (invoice.isOverdue && invoice.statusPembayaran === 'BELUM_LUNAS') {
       return <Badge variant="destructive">Belum Lunas</Badge>
     }
     
