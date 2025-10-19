@@ -38,6 +38,8 @@ import { createInvoiceSchema, type CreateInvoice } from '@/lib/schemas'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { QualityBadge } from '@/components/aging/quality-badge'
+import { AgingAnalysis } from '@/lib/types/aging'
 
 interface Invoice {
   id: number
@@ -67,6 +69,7 @@ interface Invoice {
   remainingBalance: number
   isFullyPaid: boolean
   isOverdue: boolean
+  aging: AgingAnalysis
   createdAt: string
   updatedAt: string
 }
@@ -112,7 +115,7 @@ export default function InvoicesPage() {
 
   const watchedTanggal = watch('tanggal')
   const watchedTermin = watch('termin')
-  const watchedJatuhTempo = watch('jatuhTempo')
+
 
   useEffect(() => {
     fetchInvoices()
@@ -260,20 +263,23 @@ export default function InvoicesPage() {
   }
 
   const getStatusBadge = (invoice: Invoice) => {
-    if (invoice.isOverdue) {
-      return <Badge variant="destructive">Jatuh Tempo</Badge>
+    // Prioritas: Jika sudah lunas, selalu tampilkan "Lunas" (hijau)
+    if (invoice.statusPembayaran === 'LUNAS') {
+      return <Badge variant="default" className="bg-green-500">Lunas</Badge>
     }
     
-    switch (invoice.statusPembayaran) {
-      case 'LUNAS':
-        return <Badge variant="default" className="bg-green-500">Lunas</Badge>
-      case 'SEBAGIAN':
-        return <Badge variant="secondary">Sebagian</Badge>
-      case 'BELUM_LUNAS':
-        return <Badge variant="outline">Belum Lunas</Badge>
-      default:
-        return <Badge variant="outline">{invoice.statusPembayaran}</Badge>
+    // Jika belum lunas dan sudah jatuh tempo, tampilkan "Belum Lunas" (merah)  
+    if (invoice.isOverdue && invoice.statusPembayaran === 'BELUM_LUNAS') {
+      return <Badge variant="destructive">Belum Lunas</Badge>
     }
+    
+    // Jika belum lunas tapi belum jatuh tempo, tampilkan "Belum Lunas" (outline)
+    if (invoice.statusPembayaran === 'BELUM_LUNAS') {
+      return <Badge variant="outline">Belum Lunas</Badge>
+    }
+    
+    // Fallback untuk status lainnya
+    return <Badge variant="outline">{invoice.statusPembayaran}</Badge>
   }
 
   const resetFilters = () => {
@@ -523,7 +529,6 @@ export default function InvoicesPage() {
                 <SelectContent>
                   <SelectItem value="all">Semua status</SelectItem>
                   <SelectItem value="BELUM_LUNAS">Belum Lunas</SelectItem>
-                  <SelectItem value="SEBAGIAN">Sebagian</SelectItem>
                   <SelectItem value="LUNAS">Lunas</SelectItem>
                 </SelectContent>
               </Select>
@@ -565,6 +570,7 @@ export default function InvoicesPage() {
                       <TableHead>Terbayar</TableHead>
                       <TableHead>Sisa</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Kualitas</TableHead>
                       <TableHead className="text-right">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -617,6 +623,20 @@ export default function InvoicesPage() {
                         </TableCell>
                         <TableCell>
                           {getStatusBadge(invoice)}
+                        </TableCell>
+                        <TableCell>
+                          {invoice.aging ? (
+                            <QualityBadge 
+                              quality={invoice.aging.quality}
+                              daysOverdue={invoice.aging.daysOverdue}
+                              size="sm"
+                              showDays={false}
+                            />
+                          ) : (
+                            <Badge variant="outline" className="text-xs">
+                              N/A
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">

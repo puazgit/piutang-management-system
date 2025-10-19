@@ -127,12 +127,10 @@ export async function POST(request: NextRequest) {
       const newTotalPayments = currentTotalPayments + validatedData.penerimaan
       const newRemainingBalance = invoice.nilaiInvoice - newTotalPayments
 
-      // Update invoice status based on payment
+      // Update invoice status based on payment (simplified to BELUM_LUNAS or LUNAS only)
       let newStatus = 'BELUM_LUNAS'
       if (newRemainingBalance <= 0) {
         newStatus = 'LUNAS'
-      } else if (newTotalPayments > 0) {
-        newStatus = 'SEBAGIAN'
       }
 
       await tx.invoice.update({

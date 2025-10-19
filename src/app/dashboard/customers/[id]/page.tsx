@@ -114,7 +114,6 @@ export default function CustomerDetailPage() {
   const getStatusBadge = (status: string | null) => {
     const statusStyles = {
       'BELUM_LUNAS': 'bg-red-500',
-      'SEBAGIAN': 'bg-yellow-500',
       'LUNAS': 'bg-green-500',
       'AKTIF': 'bg-blue-500',
       'BATAL': 'bg-gray-500',

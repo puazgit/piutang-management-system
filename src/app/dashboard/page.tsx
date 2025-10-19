@@ -14,11 +14,13 @@ import {
   Calendar,
   DollarSign,
   ArrowRight,
-  Plus
+  Plus,
+  BarChart3
 } from 'lucide-react'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { AgingReport } from '@/components/aging/aging-report'
 
 interface DashboardStats {
   totalCustomers: number
@@ -132,20 +134,23 @@ export default function DashboardPage() {
   }
 
   const getStatusBadge = (status: string, isOverdue: boolean) => {
-    if (isOverdue) {
-      return <Badge variant="destructive">Jatuh Tempo</Badge>
+    // Prioritas: Jika sudah lunas, selalu tampilkan "Lunas" (hijau)
+    if (status === 'LUNAS') {
+      return <Badge variant="default" className="bg-green-500">Lunas</Badge>
     }
     
-    switch (status) {
-      case 'LUNAS':
-        return <Badge variant="default" className="bg-green-500">Lunas</Badge>
-      case 'SEBAGIAN':
-        return <Badge variant="secondary">Sebagian</Badge>
-      case 'BELUM_LUNAS':
-        return <Badge variant="outline">Belum Lunas</Badge>
-      default:
-        return <Badge variant="outline">{status}</Badge>
+    // Jika belum lunas dan sudah jatuh tempo, tampilkan "Belum Lunas" (merah)
+    if (isOverdue && status === 'BELUM_LUNAS') {
+      return <Badge variant="destructive">Belum Lunas</Badge>
     }
+    
+    // Jika belum lunas tapi belum jatuh tempo, tampilkan "Belum Lunas" (outline)
+    if (status === 'BELUM_LUNAS') {
+      return <Badge variant="outline">Belum Lunas</Badge>
+    }
+    
+    // Fallback untuk status lainnya
+    return <Badge variant="outline">{status}</Badge>
   }
 
   if (isLoading) {
@@ -346,6 +351,30 @@ export default function DashboardPage() {
                 <div className="text-xs text-gray-500">All transactions</div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Aging Analysis */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center space-x-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                <span>Analisis Aging Piutang</span>
+              </CardTitle>
+              <CardDescription>
+                Kualitas piutang berdasarkan umur jatuh tempo
+              </CardDescription>
+            </div>
+            <Link href="/dashboard/aging">
+              <Button variant="outline" size="sm">
+                View Full Report
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <AgingReport showHeader={false} />
           </CardContent>
         </Card>
 

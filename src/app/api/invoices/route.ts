@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { createInvoiceSchema } from '@/lib/schemas'
 import { Prisma } from '@prisma/client'
+import { analyzeInvoiceAging } from '@/lib/aging-utils'
 
 export async function GET(request: NextRequest) {
   try {
@@ -77,12 +78,15 @@ export async function GET(request: NextRequest) {
       prisma.invoice.count({ where }),
     ])
 
-    // Calculate remaining balance for each invoice
+    // Calculate remaining balance and aging analysis for each invoice
     const invoicesWithBalance = invoices.map((invoice) => {
       const totalPayments = invoice.payments.reduce((sum: number, payment: { penerimaan: number }) => sum + payment.penerimaan, 0)
       const remainingBalance = invoice.nilaiInvoice - totalPayments
       const isFullyPaid = remainingBalance <= 0
       const isOverdue = new Date() > new Date(invoice.jatuhTempo) && !isFullyPaid
+      
+      // Add aging analysis
+      const agingAnalysis = analyzeInvoiceAging(invoice)
       
       return {
         ...invoice,
@@ -90,6 +94,7 @@ export async function GET(request: NextRequest) {
         remainingBalance,
         isFullyPaid,
         isOverdue,
+        aging: agingAnalysis,
       }
     })
 

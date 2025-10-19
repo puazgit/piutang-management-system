@@ -267,20 +267,23 @@ export default function InvoiceDetailPage() {
   const getStatusBadge = () => {
     if (!invoice) return null
 
-    if (invoice.isOverdue) {
-      return <Badge variant="destructive">Jatuh Tempo</Badge>
+    // Prioritas: Jika sudah lunas, selalu tampilkan "Lunas" (hijau)
+    if (invoice.statusPembayaran === 'LUNAS') {
+      return <Badge variant="default" className="bg-green-500">Lunas</Badge>
     }
     
-    switch (invoice.statusPembayaran) {
-      case 'LUNAS':
-        return <Badge variant="default" className="bg-green-500">Lunas</Badge>
-      case 'SEBAGIAN':
-        return <Badge variant="secondary">Sebagian</Badge>
-      case 'BELUM_LUNAS':
-        return <Badge variant="outline">Belum Lunas</Badge>
-      default:
-        return <Badge variant="outline">{invoice.statusPembayaran}</Badge>
+        // Jika belum lunas dan sudah jatuh tempo, tampilkan "Belum Lunas" (merah)
+    if (isOverdue && status === 'BELUM_LUNAS') {
+      return <Badge variant="destructive">Belum Lunas</Badge>
     }
+    
+    // Jika belum lunas tapi belum jatuh tempo, tampilkan "Belum Lunas" (outline)
+    if (invoice.statusPembayaran === 'BELUM_LUNAS') {
+      return <Badge variant="outline">Belum Lunas</Badge>
+    }
+    
+    // Fallback untuk status lainnya
+    return <Badge variant="outline">{invoice.statusPembayaran}</Badge>
   }
 
   if (isLoading) {

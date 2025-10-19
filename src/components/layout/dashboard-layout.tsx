@@ -23,7 +23,8 @@ import {
   FileText,
   CreditCard,
   Building2,
-  Tags
+  Tags,
+  BarChart3
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
@@ -40,6 +41,7 @@ const navigation = [
   { name: 'Pelanggan', href: '/dashboard/customers', icon: Users },
   { name: 'Invoices', href: '/dashboard/invoices', icon: FileText },
   { name: 'Pembayaran', href: '/dashboard/payments', icon: CreditCard },
+  { name: 'Aging Piutang', href: '/dashboard/aging', icon: BarChart3 },
   { name: 'Profil Perusahaan', href: '/dashboard/company', icon: Building2 },
 ]
 

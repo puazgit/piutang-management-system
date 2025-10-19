@@ -92,12 +92,10 @@ export async function DELETE(request: NextRequest, { params }: Props) {
       const totalPayments = remainingPayments.reduce((sum: number, payment: { penerimaan: number }) => sum + payment.penerimaan, 0)
       const remainingBalance = existingPayment.invoice.nilaiInvoice - totalPayments
 
-      // Update invoice status
+      // Update invoice status (simplified to BELUM_LUNAS or LUNAS only)
       let newStatus = 'BELUM_LUNAS'
       if (remainingBalance <= 0) {
         newStatus = 'LUNAS'
-      } else if (totalPayments > 0) {
-        newStatus = 'SEBAGIAN'
       }
 
       await tx.invoice.update({
