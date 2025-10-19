@@ -40,7 +40,7 @@ import {
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createPaymentSchema, type CreatePayment } from '@/lib/schemas'
+import { createPaymentFormSchema, type CreatePaymentForm } from '@/lib/schemas'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
@@ -96,8 +96,8 @@ export default function InvoiceDetailPage() {
     setValue,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<CreatePayment>({
-    resolver: zodResolver(createPaymentSchema),
+  } = useForm<CreatePaymentForm>({
+    resolver: zodResolver(createPaymentFormSchema),
   })
 
   const penerimaanValue = watch('penerimaan')
@@ -135,15 +135,35 @@ export default function InvoiceDetailPage() {
     }
   }
 
-  const onSubmit = async (data: CreatePayment) => {
+  const onSubmit = async (data: CreatePaymentForm) => {
     console.log('🚀 Form submission started with data:', data)
     console.log('📊 Current invoice:', invoice)
     console.log('🔧 Payment method:', paymentMethod)
+    console.log('🔍 Validation check - data received by onSubmit:', {
+      tanggal: data.tanggal,
+      penerimaan: data.penerimaan,
+      keterangan: data.keterangan,
+      dataType: typeof data.penerimaan,
+      isNumber: !isNaN(data.penerimaan)
+    })
     
     try {
+      // Validate params.id first
+      const invoiceId = params.id ? parseInt(params.id as string, 10) : null
+      
+      if (!invoiceId || isNaN(invoiceId)) {
+        throw new Error('Invalid invoice ID')
+      }
+      
+      console.log('🔍 Invoice ID validation:', {
+        paramsId: params.id,
+        parsedId: invoiceId,
+        isValid: !isNaN(invoiceId)
+      })
+      
       const paymentData = {
         ...data,
-        invoiceId: parseInt(params.id as string),
+        invoiceId: invoiceId,
         keterangan: data.keterangan || `Pembayaran via ${paymentMethod}`,
       }
       
@@ -164,8 +184,8 @@ export default function InvoiceDetailPage() {
       }
 
       const successMessage = invoice?.remainingBalance === data.penerimaan 
-        ? '🎉 Pembayaran berhasil dicatat - Invoice LUNAS!' 
-        : '✅ Pembayaran berhasil dicatat'
+        ? 'Pembayaran berhasil dicatat - Invoice LUNAS!' 
+        : 'Pembayaran berhasil dicatat'
       
       toast.success(successMessage)
       setIsPaymentDialogOpen(false)
@@ -457,6 +477,12 @@ export default function InvoiceDetailPage() {
                           </DialogDescription>
                         </DialogHeader>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                          {/* Debug Form State */}
+                          <div className="hidden">
+                            Form Errors: {JSON.stringify(errors)}
+                            Form Values: {JSON.stringify(watch())}
+                            Is Submitting: {isSubmitting ? 'true' : 'false'}
+                          </div>
                           {/* Quick Amount Buttons */}
                           <div className="space-y-2">
                             <Label className="text-sm font-medium">Jumlah Cepat</Label>
@@ -607,6 +633,23 @@ export default function InvoiceDetailPage() {
                             <Button 
                               type="submit" 
                               disabled={isSubmitting}
+                              onClick={(e) => {
+                                console.log('🔘 Submit button clicked')
+                                console.log('📝 Form errors:', errors)
+                                console.log('📊 Form values:', watch())
+                                console.log('⏳ Is submitting:', isSubmitting)
+                                console.log('📋 Form valid:', Object.keys(errors).length === 0)
+                                
+                                // Check if form is valid before submitting
+                                const formData = watch()
+                                console.log('🔍 Form data details:', {
+                                  tanggal: formData.tanggal,
+                                  penerimaan: formData.penerimaan,
+                                  keterangan: formData.keterangan,
+                                  hasErrors: Object.keys(errors).length > 0,
+                                  errorDetails: errors
+                                })
+                              }}
                             >
                               {isSubmitting ? 'Menyimpan...' : 'Simpan'}
                             </Button>

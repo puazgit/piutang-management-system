@@ -166,11 +166,11 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Welcome back! Here&apos;s what&apos;s happening with your piutang today.
+              Selamat Datang Kembali! Ada perkembangan apa dengan piutangmu hari ini?
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-500">Today</p>
+            <p className="text-sm text-gray-500">Hari Ini</p>
             <p className="text-lg font-semibold text-gray-900">
               {format(new Date(), 'dd MMMM yyyy')}
             </p>
@@ -185,10 +185,10 @@ export default function DashboardPage() {
                 <AlertTriangle className="h-5 w-5 text-red-500" />
                 <div className="flex-1">
                   <h3 className="text-sm font-medium text-red-800">
-                    Attention Required
+                    Perhatian Diperlukan
                   </h3>
                   <p className="text-sm text-red-700">
-                    You have {stats.overdueInvoices} overdue invoice{stats.overdueInvoices > 1 ? 's' : ''} totaling{' '}
+                    Anda memiliki {stats.overdueInvoices} invoice yang jatuh tempo{stats.overdueInvoices > 1 ? '' : ''} dengan total{' '}
                     <span className="font-semibold">
                       {formatCurrency(recentInvoices
                         .filter(invoice => invoice.isOverdue)
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                 </div>
                 <Link href="/dashboard/invoices?status=BELUM_LUNAS">
                   <Button size="sm" variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
-                    View Details
+                    Lihat Detail
                   </Button>
                 </Link>
               </div>
@@ -211,7 +211,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Pelanggan</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -250,7 +250,7 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Overdue Invoices</CardTitle>
+              <CardTitle className="text-sm font-medium">Invoices Jatuh Tempo</CardTitle>
               <AlertTriangle className="h-4 w-4 text-red-500" />
             </CardHeader>
             <CardContent>

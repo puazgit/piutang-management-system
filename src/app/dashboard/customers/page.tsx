@@ -260,9 +260,9 @@ export default function CustomersPage() {
         {/* Page Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Pelanggan</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Kelola data customer dan informasi kontak
+              Kelola data pelanggan dan informasi kontak
             </p>
           </div>
           
@@ -270,19 +270,19 @@ export default function CustomersPage() {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Tambah Customer
+                Tambah Pelanggan
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Tambah Customer Baru</DialogTitle>
+                <DialogTitle>Tambah Pelanggan Baru</DialogTitle>
                 <DialogDescription>
                   Tambahkan customer baru ke dalam sistem
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit(onCreateSubmit)} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="create-kode">Kode Customer *</Label>
+                  <Label htmlFor="create-kode">Kode Pelanggan *</Label>
                   <Input
                     id="create-kode"
                     placeholder="CUST001"
@@ -295,7 +295,7 @@ export default function CustomersPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="create-nama">Nama Customer *</Label>
+                  <Label htmlFor="create-nama">Nama Pelanggan *</Label>
                   <Input
                     id="create-nama"
                     placeholder="PT. Contoh Company"
@@ -397,9 +397,9 @@ export default function CustomersPage() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <div>
-                <CardTitle>Daftar Customer</CardTitle>
+                <CardTitle>Daftar Pelanggan</CardTitle>
                 <CardDescription>
-                  {pagination.total} customer, halaman {pagination.page} dari {pagination.totalPages}
+                  {pagination.total} pelanggan, halaman {pagination.page} dari {pagination.totalPages}
                 </CardDescription>
               </div>
             </div>
@@ -415,7 +415,7 @@ export default function CustomersPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Kode</TableHead>
-                      <TableHead>Nama Customer</TableHead>
+                      <TableHead>Nama Pelanggan</TableHead>
                       <TableHead>Kategori</TableHead>
                       <TableHead>Total Piutang</TableHead>
                       <TableHead>Invoice</TableHead>

@@ -49,6 +49,13 @@ export const createPaymentSchema = z.object({
   penerimaan: z.number().min(1, 'Jumlah pembayaran harus lebih dari 0'),
 })
 
+// Form payment schema (without invoiceId - will be added later)
+export const createPaymentFormSchema = z.object({
+  tanggal: z.string().min(1, 'Tanggal wajib diisi'),
+  keterangan: z.string().optional(),
+  penerimaan: z.number().min(1, 'Jumlah pembayaran harus lebih dari 0'),
+})
+
 export const updatePaymentSchema = createPaymentSchema.partial().extend({
   id: z.number(),
 })
@@ -87,6 +94,7 @@ export type UpdateCustomerCategory = z.infer<typeof updateCustomerCategorySchema
 export type CreateInvoice = z.infer<typeof createInvoiceSchema>
 export type UpdateInvoice = z.infer<typeof updateInvoiceSchema>
 export type CreatePayment = z.infer<typeof createPaymentSchema>
+export type CreatePaymentForm = z.infer<typeof createPaymentFormSchema>
 export type UpdatePayment = z.infer<typeof updatePaymentSchema>
 export type CreateCompanyProfile = z.infer<typeof createCompanyProfileSchema>
 export type UpdateCompanyProfile = z.infer<typeof updateCompanyProfileSchema>

@@ -177,9 +177,9 @@ export default function CustomerCategoriesPage() {
         {/* Page Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Customer Categories</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Kategori Pelanggan</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Kelola kategori customer untuk organisasi yang lebih baik
+              Kelola kategori pelanggan untuk organisasi yang lebih baik
             </p>
           </div>
           
@@ -264,7 +264,7 @@ export default function CustomerCategoriesPage() {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Nama Kategori</TableHead>
-                    <TableHead>Jumlah Customer</TableHead>
+                    <TableHead>Jumlah Pelanggan</TableHead>
                     <TableHead>Dibuat</TableHead>
                     <TableHead className="text-right">Aksi</TableHead>
                   </TableRow>

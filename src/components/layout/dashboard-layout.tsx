@@ -36,11 +36,11 @@ interface DashboardLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Customer Categories', href: '/dashboard/customer-categories', icon: Tags },
-  { name: 'Customers', href: '/dashboard/customers', icon: Users },
+  { name: 'Kategori Pelanggan', href: '/dashboard/customer-categories', icon: Tags },
+  { name: 'Pelanggan', href: '/dashboard/customers', icon: Users },
   { name: 'Invoices', href: '/dashboard/invoices', icon: FileText },
-  { name: 'Payments', href: '/dashboard/payments', icon: CreditCard },
-  { name: 'Company Profile', href: '/dashboard/company', icon: Building2 },
+  { name: 'Pembayaran', href: '/dashboard/payments', icon: CreditCard },
+  { name: 'Profil Perusahaan', href: '/dashboard/company', icon: Building2 },
 ]
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
