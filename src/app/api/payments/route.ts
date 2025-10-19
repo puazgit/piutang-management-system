@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { createPaymentSchema } from '@/lib/schemas'
@@ -77,13 +77,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     
-    // Convert date string to Date object
-    const processedBody = {
-      ...body,
-      tanggal: new Date(body.tanggal),
-    }
-    
-    const validatedData = createPaymentSchema.parse(processedBody)
+    const validatedData = createPaymentSchema.parse(body)
+    console.log('Payment data validated:', validatedData)
 
     // Check if invoice exists and get current balance
     const invoice = await prisma.invoice.findUnique({
@@ -101,7 +96,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate current total payments and remaining balance
-    const currentTotalPayments = invoice.payments.reduce((sum: number, payment: any) => sum + payment.penerimaan, 0)
+    const currentTotalPayments = invoice.payments.reduce((sum: number, payment: { penerimaan: number }) => sum + payment.penerimaan, 0)
     const remainingBalance = invoice.nilaiInvoice - currentTotalPayments
 
     // Validate payment amount
@@ -115,7 +110,10 @@ export async function POST(request: NextRequest) {
     // Create payment and update invoice status in transaction
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const payment = await tx.payment.create({
-        data: validatedData,
+        data: {
+          ...validatedData,
+          tanggal: new Date(validatedData.tanggal),
+        },
         include: {
           invoice: {
             include: {

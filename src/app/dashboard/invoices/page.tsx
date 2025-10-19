@@ -112,6 +112,7 @@ export default function InvoicesPage() {
 
   const watchedTanggal = watch('tanggal')
   const watchedTermin = watch('termin')
+  const watchedJatuhTempo = watch('jatuhTempo')
 
   useEffect(() => {
     fetchInvoices()
@@ -120,11 +121,21 @@ export default function InvoicesPage() {
 
   useEffect(() => {
     // Auto calculate jatuh tempo when tanggal or termin changes
-    if (watchedTanggal && watchedTermin) {
-      const tanggalDate = new Date(watchedTanggal)
+    if (watchedTanggal && watchedTermin && watchedTermin > 0) {
+      // Handle Date object or string
+      let tanggalDate: Date
+      if (watchedTanggal instanceof Date) {
+        tanggalDate = watchedTanggal
+      } else {
+        tanggalDate = new Date(watchedTanggal)
+      }
+      
+      // Add termin days
       const jatuhTempoDate = new Date(tanggalDate)
       jatuhTempoDate.setDate(jatuhTempoDate.getDate() + watchedTermin)
-      setValue('jatuhTempo', jatuhTempoDate)
+      
+      // Set the value as Date object (since we use valueAsDate: true)
+      setValue('jatuhTempo', jatuhTempoDate, { shouldValidate: true, shouldDirty: false })
     }
   }, [watchedTanggal, watchedTermin, setValue])
 
@@ -284,7 +295,28 @@ export default function InvoicesPage() {
             </p>
           </div>
           
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog open={isCreateDialogOpen} onOpenChange={(open) => {
+            setIsCreateDialogOpen(open)
+            if (open) {
+              // Reset form ketika dialog dibuka dengan default values
+              const today = new Date()
+              const defaultTermin = 30
+              const defaultJatuhTempo = new Date(today)
+              defaultJatuhTempo.setDate(defaultJatuhTempo.getDate() + defaultTermin)
+              
+              reset({
+                tanggal: today,
+                termin: defaultTermin,
+                jatuhTempo: defaultJatuhTempo,
+                noInvoice: '',
+                kategori: '',
+                keteranganTransaksi: '',
+              })
+            } else {
+              // Reset form when closing
+              reset()
+            }
+          }}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
@@ -353,25 +385,49 @@ export default function InvoicesPage() {
                       id="create-termin"
                       type="number"
                       placeholder="30"
+                      min="1"
+                      max="365"
                       {...register('termin', { valueAsNumber: true })}
                       className={errors.termin ? 'border-red-500' : ''}
                     />
                     {errors.termin && (
                       <p className="text-sm text-red-500">{errors.termin.message}</p>
                     )}
+                    <p className="text-xs text-gray-500">
+                      Jatuh tempo akan otomatis dihitung berdasarkan tanggal + termin
+                    </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="create-jatuhTempo">Jatuh Tempo *</Label>
+                    <Label htmlFor="create-jatuhTempo" className="flex items-center gap-2">
+                      Jatuh Tempo *
+                      {watchedTanggal && watchedTermin && (
+                        <span className="text-xs text-green-600 font-normal">
+                          (otomatis terisi)
+                        </span>
+                      )}
+                    </Label>
                     <Input
                       id="create-jatuhTempo"
                       type="date"
                       {...register('jatuhTempo', { valueAsDate: true })}
-                      className={errors.jatuhTempo ? 'border-red-500' : ''}
-                      readOnly
+                      className={
+                        errors.jatuhTempo 
+                          ? 'border-red-500' 
+                          : (watchedTanggal && watchedTermin ? 'bg-green-50 border-green-200' : '')
+                      }
+                      placeholder="Akan terisi otomatis"
                     />
                     {errors.jatuhTempo && (
                       <p className="text-sm text-red-500">{errors.jatuhTempo.message}</p>
+                    )}
+                    {watchedTanggal && watchedTermin && watchedTermin > 0 && (
+                      <p className="text-xs text-gray-500">
+                        Tanggal {watchedTanggal instanceof Date 
+                          ? format(watchedTanggal, 'dd/MM/yyyy') 
+                          : format(new Date(watchedTanggal), 'dd/MM/yyyy')
+                        } + {watchedTermin} hari
+                      </p>
                     )}
                   </div>
                 </div>

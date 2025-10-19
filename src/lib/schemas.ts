@@ -6,6 +6,8 @@ export const createCustomerSchema = z.object({
   namaCustomer: z.string().min(1, 'Nama customer harus diisi'),
   kategoriId: z.number().min(1, 'Kategori harus dipilih'),
   alamatNoInvoice: z.string().optional(),
+  telepon: z.string().optional(),
+  email: z.string().email('Format email tidak valid').optional().or(z.literal('')),
 })
 
 export const updateCustomerSchema = createCustomerSchema.partial().extend({
@@ -41,10 +43,10 @@ export const updateInvoiceSchema = createInvoiceSchema.partial().extend({
 
 // Payment schemas
 export const createPaymentSchema = z.object({
-  tanggal: z.date(),
+  tanggal: z.string().min(1, 'Tanggal wajib diisi'),
   invoiceId: z.number().min(1, 'Invoice harus dipilih'),
   keterangan: z.string().optional(),
-  penerimaan: z.number().min(0, 'Penerimaan tidak boleh negatif'),
+  penerimaan: z.number().min(1, 'Jumlah pembayaran harus lebih dari 0'),
 })
 
 export const updatePaymentSchema = createPaymentSchema.partial().extend({

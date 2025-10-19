@@ -89,7 +89,7 @@ export async function DELETE(request: NextRequest, { params }: Props) {
         where: { invoiceId: existingPayment.invoiceId },
       })
 
-      const totalPayments = remainingPayments.reduce((sum: number, payment: any) => sum + payment.penerimaan, 0)
+      const totalPayments = remainingPayments.reduce((sum: number, payment: { penerimaan: number }) => sum + payment.penerimaan, 0)
       const remainingBalance = existingPayment.invoice.nilaiInvoice - totalPayments
 
       // Update invoice status

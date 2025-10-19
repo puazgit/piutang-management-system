@@ -78,8 +78,8 @@ export async function GET(request: NextRequest) {
     ])
 
     // Calculate remaining balance for each invoice
-    const invoicesWithBalance = invoices.map((invoice: any) => {
-      const totalPayments = invoice.payments.reduce((sum: number, payment: any) => sum + payment.penerimaan, 0)
+    const invoicesWithBalance = invoices.map((invoice) => {
+      const totalPayments = invoice.payments.reduce((sum: number, payment: { penerimaan: number }) => sum + payment.penerimaan, 0)
       const remainingBalance = invoice.nilaiInvoice - totalPayments
       const isFullyPaid = remainingBalance <= 0
       const isOverdue = new Date() > new Date(invoice.jatuhTempo) && !isFullyPaid

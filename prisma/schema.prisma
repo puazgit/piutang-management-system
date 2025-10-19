@@ -33,6 +33,8 @@ model Customer {
   namaCustomer       String
   kategoriId         Int
   alamatNoInvoice    String?
+  telepon            String?
+  email              String?
   totalPiutang       Float               @default(0)
   kategori           CustomerCategory    @relation(fields: [kategoriId], references: [id])
   invoices           Invoice[]

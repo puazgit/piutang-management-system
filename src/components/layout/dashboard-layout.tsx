@@ -28,6 +28,7 @@ import {
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -77,15 +78,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white">
+        <div className="flex-1 flex flex-col min-h-0 border-r border-border bg-card">
           <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
               <div className="flex items-center">
-                <Building2 className="h-8 w-8 text-blue-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">Piutang</span>
+                <Building2 className="h-8 w-8 text-primary" />
+                <span className="ml-2 text-xl font-bold text-foreground">Piutang</span>
               </div>
             </div>
             <nav className="mt-8 flex-1 px-2 space-y-1">
@@ -97,13 +98,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     href={item.href}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
                     <item.icon
                       className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                        isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                        isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-accent-foreground'
                       }`}
                     />
                     {item.name}
@@ -128,9 +129,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </SheetTrigger>
         <SheetContent side="left" className="p-0 w-64">
           <div className="flex flex-col h-full">
-            <div className="flex items-center flex-shrink-0 px-4 py-5 border-b">
-              <Building2 className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">Piutang</span>
+            <div className="flex items-center flex-shrink-0 px-4 py-5 border-b border-border">
+              <Building2 className="h-8 w-8 text-primary" />
+              <span className="ml-2 text-xl font-bold text-foreground">Piutang</span>
             </div>
             <nav className="flex-1 px-2 py-4 space-y-1">
               {navigation.map((item) => {
@@ -142,13 +143,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                     onClick={() => setSidebarOpen(false)}
                     className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors ${
                       isActive
-                        ? 'bg-blue-100 text-blue-900'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
                     <item.icon
                       className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                        isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
+                        isActive ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-accent-foreground'
                       }`}
                     />
                     {item.name}
@@ -163,12 +164,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Content */}
       <div className="md:pl-64 flex flex-col flex-1">
         {/* Top Navigation */}
-        <div className="sticky top-0 z-10 md:pl-0 pl-16 flex-shrink-0 flex h-16 bg-white shadow border-b border-gray-200">
+        <div className="sticky top-0 z-10 md:pl-0 pl-16 flex-shrink-0 flex h-16 bg-background shadow border-b border-border">
           <div className="flex-1 px-4 flex justify-between items-center">
             <div className="flex-1 flex">
               {/* Page title will be handled by individual pages */}
             </div>
             <div className="ml-4 flex items-center md:ml-6 space-x-4">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
               {/* Notifications */}
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />
